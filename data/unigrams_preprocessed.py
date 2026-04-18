@@ -13,16 +13,16 @@ def compute_unigrams():
             if not line:
                 continue
 
-            parts = line.split(maxsplit=1)
-            if len(parts) != 2:
+            parts = line.split('\t')
+            if len(parts) != 3:
                 continue
 
-            category, sentence = parts
+            category, sentence, answer = parts
 
             if category not in CATEGORIES:
                 continue
 
-            # Clean tokenisation (removes punctuation)
+            # Only process the sentence (ignore answer)
             words = re.findall(r'\b\w+\b', sentence.lower())
             category_words[category].extend(words)
 

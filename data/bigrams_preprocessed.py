@@ -8,25 +8,27 @@ def compute_bigrams():
     category_bigrams = {cat: [] for cat in CATEGORIES}
 
     with open(INPUT_FILE, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
 
-            parts = line.split(maxsplit=1)
-            if len(parts) != 2:
-                continue
+                parts = line.split('\t')
+                if len(parts) != 3:
+                    continue
 
-            category, sentence = parts
+                category, sentence, answer = parts
 
-            if category not in CATEGORIES:
-                continue
+                if category not in CATEGORIES:
+                    continue
 
-            words = re.findall(r'\b\w+\b', sentence.lower())
+                # Process ONLY the sentence
+                words = re.findall(r'\b\w+\b', sentence.lower())
 
-            # Generate bigrams
-            bigrams = [(words[i], words[i+1]) for i in range(len(words) - 1)]
-            category_bigrams[category].extend(bigrams)
+                # Generate bigrams
+                bigrams = [(words[i], words[i+1]) for i in range(len(words) - 1)]
+                category_bigrams[category].extend(bigrams)
+
 
     for category in CATEGORIES:
         freq = Counter(category_bigrams[category])

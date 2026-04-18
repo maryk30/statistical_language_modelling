@@ -13,15 +13,16 @@ def compute_bigrams():
             if not line:
                 continue
 
-            parts = line.split(maxsplit=1)
-            if len(parts) != 2:
+            parts = line.split('\t')
+            if len(parts) != 3:
                 continue
 
-            category, sentence = parts
+            category, sentence, answer = parts
 
             if category not in CATEGORIES:
                 continue
 
+            # Process ONLY the sentence
             words = re.findall(r'\b\w+\b', sentence.lower())
 
             # Generate bigrams
