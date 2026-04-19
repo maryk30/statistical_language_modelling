@@ -58,20 +58,24 @@ def load_bigrams(counts_dir):
 
     return models, totals
 
-def compute_global_vocab_size_from_bigrams(counts_dir):
+def compute_global_vocab_size(train_file):
     vocab = set()
+    with open(train_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
 
-    for cat in CATEGORIES:
-        file_path = os.path.join(counts_dir, f"bigrams_{cat}_preprocessed.txt")
+            parts = line.split('\t')
+            if len(parts) != 3:
+                continue
 
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                w1, w2, _ = line.strip().split()
-                vocab.add(w1)
-                vocab.add(w2)
+            _, sentence, _ = parts
+
+            words = re.findall(r'\b\w+\b', sentence.lower())
+            vocab.update(words)
 
     return len(vocab)
-
 
 # ---------- SCORING FUNCTIONS ----------
 def score_unigrams(words, model, total):
@@ -97,17 +101,22 @@ def score_bigrams(words, model, total):
     return score
 
 
-def score_bigrams_smooth(words, bigram_model, total_bigrams, V):
+def score_bigrams_smooth(words, bigram_model, unigram_model, V):
+    if len(words) < 2:
+        return math.log(1e-6)
+
     score = 0.0
 
     for i in range(len(words) - 1):
-        bg = (words[i], words[i+1])
-        count = bigram_model.get(bg, 0)
+        w1, w2 = words[i], words[i + 1]
 
-        prob = (count + 1) / (total_bigrams + V)
+        bigram_count = bigram_model.get((w1, w2), 0)
+        unigram_count = unigram_model.get(w1, 0)
+
+        prob = (bigram_count + 1) / (unigram_count + V)
         score += math.log(prob)
 
-    return score
+    return score / (len(words) - 1)
 
 
 # ---------- CLASSIFIER ----------
@@ -115,11 +124,13 @@ def classify(model_type, counts_dir, eval_file):
     if model_type == "unigrams":
         unigram_models, unigram_totals = load_unigrams(counts_dir)
 
-    elif model_type in ["bigrams", "smooth"]:
+    elif model_type == "bigrams":
         bigram_models, bigram_totals = load_bigrams(counts_dir)
 
-    if model_type == "smooth":
-        V = compute_global_vocab_size_from_bigrams(counts_dir)
+    elif model_type == "smooth":
+        unigram_models, unigram_totals = load_unigrams("counts")
+        bigram_models, bigram_totals = load_bigrams(counts_dir)
+        V = compute_global_vocab_size("data/train.txt")
 
 
     with open(eval_file, 'r', encoding='utf-8') as f:
@@ -152,7 +163,7 @@ def classify(model_type, counts_dir, eval_file):
                     score = score_bigrams_smooth(
                         words,
                         bigram_models[cat],
-                        bigram_totals[cat],
+                        unigram_models[cat],
                         V
                     )
 
