@@ -1,6 +1,6 @@
-INPUT_FILE = "eval.txt"
-QUESTIONS_FILE = "eval-questions.txt"
-LABELS_FILE = "eval-labels.txt"
+INPUT_FILE = "data/eval.txt"
+QUESTIONS_FILE = "data/eval-questions.txt"
+LABELS_FILE = "data/eval-labels.txt"
 
 def process_eval():
     with open(INPUT_FILE, 'r', encoding='utf-8') as infile, \
