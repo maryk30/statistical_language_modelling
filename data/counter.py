@@ -2,7 +2,7 @@ from collections import Counter
 import re
 import os
 
-INPUT_FILE = "train.txt"
+INPUT_FILE = "data/train.txt"
 CATEGORIES = {"LITERATURE", "HISTORY", "MUSIC", "GEOGRAPHY", "SCIENCE"}
 
 def compute_unigrams():

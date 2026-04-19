@@ -2,7 +2,7 @@ from collections import Counter
 import re
 import os
 
-INPUT_FILE = "train_preprocessed.txt"
+INPUT_FILE = "data/train_preprocessed.txt"
 CATEGORIES = {"LITERATURE", "HISTORY", "MUSIC", "GEOGRAPHY", "SCIENCE"}
 
 def compute_unigrams():
@@ -79,4 +79,4 @@ def compute_bigrams():
     
 if __name__ == "__main__":
     compute_unigrams()
-    compute_unigrams
+    compute_bigrams()

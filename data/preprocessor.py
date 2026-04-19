@@ -1,7 +1,7 @@
 import re
 
-INPUT_FILE = "train.txt"
-OUTPUT_FILE = "train_preprocessed.txt"
+INPUT_FILE = "data/train.txt"
+OUTPUT_FILE = "data/train_preprocessed.txt"
 
 CATEGORIES = {"LITERATURE", "HISTORY", "MUSIC", "GEOGRAPHY", "SCIENCE"}
 
@@ -64,7 +64,7 @@ def preprocess_file():
             processed_sentence = preprocess(sentence)
 
             # Reconstruct line (keep answer unchanged)
-            outfile.write(f'{category} "{processed_sentence}" {answer}\n')
+            outfile.write(f'{category}\t{processed_sentence}\t{answer}\n')
 
     print(f"Saved: {OUTPUT_FILE}")
 
